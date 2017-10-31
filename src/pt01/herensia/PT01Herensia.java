@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
-import seres.Protoss;
-import seres.Terran;
-import seres.Zerg;
-import seres.Especies;
+import pt01.seres.Protoss;
+import pt01.seres.Terran;
+import pt01.seres.Zerg;
+import pt01.seres.Especies;
 
 public class PT01Herensia {
 
