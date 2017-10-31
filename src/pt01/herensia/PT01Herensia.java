@@ -5,24 +5,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import static java.lang.Integer.parseInt;
 import java.util.ArrayList;
-import pt01.seres.Protoss;
-import pt01.seres.Terran;
-import pt01.seres.Zerg;
-import pt01.seres.Especies;
+import pt01.Exceptions.Exceptionz;
 
 public class PT01Herensia {
 
-    //Hayq que cambiar esto, y asignar solo un array en lugar de 3.
     static ArrayList<Especies> especiess = new ArrayList<>();
-    
-    //private static ArrayList<Terran> terrans;
-    private static ArrayList<Zerg> zergs;
-    private static ArrayList<Protoss> protosss;
 
     public static void main(String[] args) {
         title();
         options();
-        boolean bnd;
+        boolean bnd; //bandera temporal, indica la volundad de salir cuando se baja.
         do {
             String CommandString = pedStr("|  Opcion:                               |");
             bnd = mainCommandAnalizer(CommandString);
@@ -33,45 +25,98 @@ public class PT01Herensia {
     //--------------------------------------------------------------------------
     private static boolean mainCommandAnalizer(String CommandString) { //Esto analiza y separa la linea de comando, ya sabes.
         boolean bnd = true;
-        
-        //terrans = new ArrayList<>();
-        zergs = new ArrayList<>();
-        protosss = new ArrayList<>();
-
-        String[] command = CommandString.split(" ");
-        if (command.length == 7) {
-            if (command[0].equalsIgnoreCase("a")) {
-                if (command[1].equalsIgnoreCase("terran")) {
-                    terran(command);
-                } else if (command[1].equalsIgnoreCase("zerg")) {
-                    zerg(command);
-                } else if (command[1].equalsIgnoreCase("protoss")) {
-                    protoss(command);
+        try {
+            String[] command = CommandString.split(" ");
+            if (command.length == 7) {
+                if (command[0].equalsIgnoreCase("a")) {
+                    if (command[1].equalsIgnoreCase("terran")) {
+                        terran(command);
+                    } else if (command[1].equalsIgnoreCase("zerg")) {
+                        zerg(command);
+                    } else if (command[1].equalsIgnoreCase("protoss")) {
+                        protoss(command);
+                    } else {
+                        throw new Exceptionz(2);
+                    }
                 } else {
-                    System.out.println("| [!]  ERROR 002: Especie Incorrecta [!] |");
+                    throw new Exceptionz(1);
                 }
-            } else {
-                System.out.println("| [!] ERROR 001: Nº Arguments Invalid[!] |");
+            } else if (command[0].equalsIgnoreCase("r")) {
+
+            } else if (command[0].equalsIgnoreCase("m")) {
+
+            } else if (command[0].equalsIgnoreCase("c")) {
+
+            } else if (command[0].equalsIgnoreCase("s")) {
+                exit();
+                bnd = false;
             }
-        } else if (command[0].equalsIgnoreCase("r")) {
-            
-        } else if (command[0].equalsIgnoreCase("m")) {
-
-        } else if (command[0].equalsIgnoreCase("c")) {
-
-        } else if (command[0].equalsIgnoreCase("s")) {
-            exit();
-            bnd = false;
+        } catch (Exception e) {
         }
         return bnd;
+
     }
-    //Esquadrones
+
+//Mejora
+//--------------------------------------------------------------------------
+    public static void mejorarEscuadron(String command[]) {
+        try {
+            for (Especies e : especiess) {
+                if (command[1].equals(e.getNombre())) {
+                    if (e instanceof Terran) {
+                        if (command[2].equalsIgnoreCase("tecnologia")) {
+                            ((Terran) e).setNumEdifi(Integer.parseInt(command[3]));
+                        } else if (command[2].equalsIgnoreCase("edificio")) {
+                            ((Terran) e).setNumEdifi(Integer.parseInt(command[3]));
+                        } else {
+                            System.out.println("");
+                        }
+                    }
+
+                    if (e instanceof Zerg) {
+                        switch (command[2].toLowerCase()) {
+                            case "overlords":
+                                ((Zerg) e).setNumOverlord(Integer.parseInt(command[3]));
+                                break;
+                            case "esbirros":
+                                ((Zerg) e).setNumEsbirro(Integer.parseInt(command[3]));
+                                break;
+                        }
+                    }
+                    if (e instanceof Protoss) {
+                        switch (command[2].toLowerCase()) {
+                            case "pilones":
+                                ((Protoss) e).setNumPilon(Integer.parseInt(command[3]));
+                                break;
+                        }
+                    }
+                } else {
+                    System.out.println("Error");
+                }
+            }
+        } catch (Exception e) {
+        }
+
+    }
+
+    //Batalla
     //--------------------------------------------------------------------------
-    public static void batalla(String command[]){
+    public static void batalla(String command[]) {
         // pos 1 y 2 nombres de escuadrones a batallar.
-        
+        //comprobar que nombres existen.
+        boolean bnd = checkSquad(command[1]);
+        if (bnd) {
+            boolean bnd2 = checkSquad(command[2]);
+            if (bnd2) {
+
+            } else {
+                System.out.println("|  [!]   Escuadron NO registrado   [!]  |");
+            }
+        } else {
+            System.out.println("|  [!]   Escuadron NO registrado   [!]  |");
+        }
     }
-    
+
     //Esquadrones
     //--------------------------------------------------------------------------
     public static void protoss(String command[]) {
@@ -83,30 +128,33 @@ public class PT01Herensia {
         int pil = 0;
         boolean bnd = true;
         boolean bnd1 = checkNum(command[3]);
-        if (!bnd1) {
-            atk = (double) Integer.parseInt(command[3]);
-            boolean bnd2 = checkNum(command[4]);
-            if (!bnd2) {
-                def = (double) Integer.parseInt(command[4]);
-                boolean bnd3 = checkNum(command[5]);
-                if (!bnd3) {
-                    pil = Integer.parseInt(command[5]);
-                    bnd = false;
+        try {
+            if (!bnd1) {
+                atk = (double) Integer.parseInt(command[3]);
+                boolean bnd2 = checkNum(command[4]);
+                if (!bnd2) {
+                    def = (double) Integer.parseInt(command[4]);
+                    boolean bnd3 = checkNum(command[5]);
+                    if (!bnd3) {
+                        pil = Integer.parseInt(command[5]);
+                        bnd = false;
+                    } else {
+                        throw new Exceptionz(3);
+                    }
                 } else {
-                    System.out.println("| [!]  ERROR 003: Dato 6 Incorrecto  [!] |");
+                    throw new Exceptionz(3);
                 }
             } else {
-                System.out.println("| [!]  ERROR 003: Dato 5 Incorrecto  [!] |");
+                throw new Exceptionz(3);
             }
-        } else {
-            System.out.println("| [!]  ERROR 003: Dato 4 Incorrecto  [!] |");
-        }
-        if (bnd == false) {
-            Protoss p = new Protoss(pil, nom, vic, atk, def);
-            protosss.add(p);
-            System.out.println("| [!]   OK: Escuadron Registrado    [!] |");
-        } else if (bnd) {
-            System.out.println("| [!]  KO: Escuadron NO registrado  [!] |");
+            if (bnd == false) {
+                Protoss p = new Protoss(pil, nom, vic, atk, def);
+                especiess.add(p);
+                System.out.println("| [!]   OK: Escuadron Registrado    [!] |");
+            } else if (bnd) {
+                throw new Exceptionz(4);
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -120,36 +168,39 @@ public class PT01Herensia {
         int ove = 0;
         boolean bnd = true;
         boolean bnd1 = checkNum(command[3]);
-        if (!bnd1) {
-            atk = (double) Integer.parseInt(command[3]);
-            boolean bnd2 = checkNum(command[4]);
-            if (!bnd2) {
-                def = (double) Integer.parseInt(command[4]);
-                boolean bnd3 = checkNum(command[5]);
-                if (!bnd3) {
-                    esb = Integer.parseInt(command[5]);
-                    boolean bnd4 = checkNum(command[6]);
-                    if (!bnd4) {
-                        ove = Integer.parseInt(command[6]);
-                        bnd = false;
+        try {
+            if (!bnd1) {
+                atk = (double) Integer.parseInt(command[3]);
+                boolean bnd2 = checkNum(command[4]);
+                if (!bnd2) {
+                    def = (double) Integer.parseInt(command[4]);
+                    boolean bnd3 = checkNum(command[5]);
+                    if (!bnd3) {
+                        esb = Integer.parseInt(command[5]);
+                        boolean bnd4 = checkNum(command[6]);
+                        if (!bnd4) {
+                            ove = Integer.parseInt(command[6]);
+                            bnd = false;
+                        } else {
+                            throw new Exceptionz(3);
+                        }
                     } else {
-                        System.out.println("| [!]  ERROR 003: Dato 7 Incorrecto  [!] |");
+                        throw new Exceptionz(3);
                     }
                 } else {
-                    System.out.println("| [!]  ERROR 003: Dato 6 Incorrecto  [!] |");
+                    throw new Exceptionz(3);
                 }
             } else {
-                System.out.println("| [!]  ERROR 003: Dato 5 Incorrecto  [!] |");
+                throw new Exceptionz(3);
             }
-        } else {
-            System.out.println("| [!]  ERROR 003: Dato 4 Incorrecto  [!] |");
-        }
-        if (bnd == false) {
-            Zerg z = new Zerg(esb, ove, nom, vic, atk, def);
-            zergs.add(z);
-            System.out.println("| [!]   OK: Escuadron Registrado     [!] |");
-        } else if (bnd) {
-            System.out.println("| [!]  KO: Escuadron NO registrado   [!] |");
+            if (bnd == false) {
+                Zerg z = new Zerg(esb, ove, nom, vic, atk, def);
+                especiess.add(z);
+                System.out.println("| [!]   OK: Escuadron Registrado     [!] |");
+            } else if (bnd) {
+                throw new Exceptionz(4);
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -162,41 +213,53 @@ public class PT01Herensia {
         int tech = 0;
         boolean bnd = true;
         boolean bnd1 = checkNum(command[3]);
-        if (!bnd1) {
-            atk = (double) Integer.parseInt(command[3]);
-            boolean bnd2 = checkNum(command[4]);
-            if (!bnd2) {
-                def = (double) Integer.parseInt(command[4]);
-                boolean bnd3 = checkNum(command[5]);
-                if (!bnd3) {
-                    edi = Integer.parseInt(command[5]);
-                    boolean bnd4 = checkNum(command[6]);
-                    if (!bnd4) {
-                        tech = Integer.parseInt(command[6]);
-                        bnd = false;
+        try {
+            if (!bnd1) {
+                atk = (double) Integer.parseInt(command[3]);
+                boolean bnd2 = checkNum(command[4]);
+                if (!bnd2) {
+                    def = (double) Integer.parseInt(command[4]);
+                    boolean bnd3 = checkNum(command[5]);
+                    if (!bnd3) {
+                        edi = Integer.parseInt(command[5]);
+                        boolean bnd4 = checkNum(command[6]);
+                        if (!bnd4) {
+                            tech = Integer.parseInt(command[6]);
+                            bnd = false;
+                        } else {
+                            throw new Exceptionz(3);
+                        }
                     } else {
-                        System.out.println("| [!]  ERROR 003: Dato 7 Incorrecto  [!] |");
+                        throw new Exceptionz(3);
                     }
                 } else {
-                    System.out.println("| [!]  ERROR 003: Dato 6 Incorrecto  [!] |");
+                    throw new Exceptionz(3);
                 }
             } else {
-                System.out.println("| [!]  ERROR 003: Dato 5 Incorrecto  [!] |");
+                throw new Exceptionz(3);
             }
-        } else {
-            System.out.println("| [!]  ERROR 003: Dato 4 Incorrecto  [!] |");
-        }
-        if (bnd == false) {
-            Terran t = new Terran(edi, tech, nom, vic, atk, def);
-            especiess.add(t);
-            System.out.println("| [!]   OK: Escuadron Registrado    [!] |");
-        } else if (bnd) {
-            System.out.println("| [!]  KO: Escuadron NO registrado  [!] |");
+            if (bnd == false) {
+                Terran t = new Terran(edi, tech, nom, vic, atk, def);
+                especiess.add(t);
+                System.out.println("| [!]   OK: Escuadron Registrado    [!] |");
+            } else if (bnd) {
+                throw new Exceptionz(4);
+            }
+        } catch (Exception e) {
         }
     }
 
     //Recursos
     //-------------------------------------------------------------------------- 
+    private static boolean checkSquad(String nom) {
+        boolean bnd = false;
+        for (Especies e : especiess) {
+            if (nom.equalsIgnoreCase(e.getNombre()));
+            bnd = true;
+        }
+        return bnd;
+    }
+
     private static String pedStr(String mensaje) {
         BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
         String text = "";
